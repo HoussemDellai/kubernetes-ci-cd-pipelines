@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-deploy
+spec:
+  selector:
+    matchLabels:
+      app: web
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: web
+        image: houssemdocker/web-app:1.0 
+        # image: __ACR_NAME__.azurecr.io/webapp:1.__Build.BuildId__
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: 300m
+            memory: "100Mi"
+          requests:
+            cpu: 100m
+            memory: "50Mi"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: web-svc
+spec:
+  selector:
+    app: web
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  type: LoadBalancer
